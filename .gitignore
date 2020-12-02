@@ -1,7 +1,0 @@
-logs
-*.log
-.DS_Store
-build
-node_modules
-.idea
-.vscode
