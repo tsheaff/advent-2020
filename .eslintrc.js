@@ -50,6 +50,7 @@ module.exports = {
       },
     ],
     'import/no-dynamic-require': 'off',
+    'prefer-const': 'off',
   },
 };
 
