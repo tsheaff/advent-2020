@@ -2,34 +2,35 @@ const _ = require('lodash');
 const fileLines = require('../shared/fileLines');
 
 const lines = fileLines('./input.txt');
-let maxSeatId = 0;
 let allSeats = {};
 _.forEach(lines, (line) => {
-  let range = 128;
+  let rowShift = 128;
+  let seatShift = 8;
   let row = 0;
   let seat = 0;
-  let rowShift = range / 2;
-  let seatShift = 4;
+
   _.forEach(line, (char, index) => {
     if (index < 7) {
-      if (char === 'B') { row += rowShift; }
       rowShift /= 2;
+      if (char === 'B') { row += rowShift; }
       return;
     }
-    if (char === 'R') { seat += seatShift; }
     seatShift /= 2;
+    if (char === 'R') { seat += seatShift; }
   });
   const seatId = 8 * row + seat;
   allSeats[seatId] = true;
-  if (seatId > maxSeatId) {
-    maxSeatId = seatId;
-  }
 });
 
+const maxSeatId = _.max(_.map(_.keys(allSeats), (str) => parseInt(str, 10)));
 console.log('Answer 1 is', maxSeatId);
 
 _.forEach(_.range(maxSeatId + 1), (seatId) => {
-  if (!allSeats[seatId.toString()] && allSeats[(seatId - 1).toString()] && allSeats[(seatId + 1).toString()]) {
+  if (
+    !allSeats[seatId]
+    && allSeats[(seatId - 1)]
+    && allSeats[(seatId + 1)]
+  ) {
     console.log('Answer 2 is', seatId);
   }
 });
