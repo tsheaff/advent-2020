@@ -26,11 +26,7 @@ const maxSeatId = _.max(_.map(_.keys(allSeats), (str) => parseInt(str, 10)));
 console.log('Answer 1 is', maxSeatId);
 
 _.forEach(_.range(maxSeatId + 1), (seatId) => {
-  if (
-    !allSeats[seatId]
-    && allSeats[(seatId - 1)]
-    && allSeats[(seatId + 1)]
-  ) {
+  if (!allSeats[seatId] && allSeats[(seatId - 1)] && allSeats[(seatId + 1)]) {
     console.log('Answer 2 is', seatId);
   }
 });
