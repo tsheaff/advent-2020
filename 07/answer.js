@@ -4,11 +4,18 @@ const fileLines = require('../shared/fileLines');
 const lines = fileLines('./input.txt');
 const dagDown = {};
 const dagUp = {};
+
+const addToDag = function (dag, rootColor, color, number) {
+  let dagFor = dag[rootColor] || {};
+  dagFor[color] = number;
+  dag[rootColor] = dagFor;
+};
+
+/* Parse the bags into two DAGs */
 _.forEach(lines, (line) => {
   const words = line.split(' ');
   const mainColor = _.take(words, 2).join(' ');
-  const containment = _.takeRight(words, words.length - 4).join(' ');
-  const rules = containment.split(', ');
+  const rules = _.takeRight(words, words.length - 4).join(' ').split(', ');
   _.forEach(rules, (rule) => {
     if (rule.startsWith('no other bags')) {
       return;
@@ -21,36 +28,32 @@ _.forEach(lines, (line) => {
     }
 
     const color = _.take(_.takeRight(ruleParts, ruleParts.length - 1), 2).join(' ');
-    let dagDownFor = dagDown[mainColor] || {};
-    dagDownFor[color] = num;
-    dagDown[mainColor] = dagDownFor;
-
-    let dagUpFor = dagUp[color] || {};
-    dagUpFor[mainColor] = num;
-    dagUp[color] = dagUpFor;
+    addToDag(dagDown, mainColor, color, num);
+    addToDag(dagUp, color, mainColor, num);
   });
 });
 
-const upColors = {};
-const getColorsUp = function (baseColor) {
+/* Part 1, counting the number of distinct colors in the "up" dag */
+const getNumColorsUp = function (baseColor, upColors = {}) {
   const forBase = dagUp[baseColor];
   _.forEach(forBase, (num, color) => {
     upColors[color] = true;
-    getColorsUp(color);
+    getNumColorsUp(color, upColors);
   });
+  return upColors;
 };
 
-getColorsUp('shiny gold');
-console.log('Answer 1', _.size(upColors));
+console.log('Answer 1', _.size(getNumColorsUp('shiny gold')));
 
-const getNumBagsIn = function (baseColor) {
+/* Part 1, counting the number of total nested bags in the "down" dag */
+const getNumBagsDown = function (baseColor, isRoot = true) {
   let numBags = 0;
   const forBase = dagDown[baseColor];
   if (!forBase) { return 1; }
   _.forEach(forBase, (num, color) => {
-    numBags += (num * getNumBagsIn(color));
+    numBags += (num * getNumBagsDown(color, false));
   });
-  return 1 + numBags;
+  return numBags + (isRoot ? 0 : 1); // don't count yourself if you're the root
 };
 
-console.log('Answer 2', getNumBagsIn('shiny gold') - 1);
+console.log('Answer 2', getNumBagsDown('shiny gold'));
