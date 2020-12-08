@@ -20,26 +20,28 @@ const runInstructions = (instructions) => {
   let val = 0;
   let visitedIndexes = {};
   while (true) {
-    // console.log('instructionIndex', instructionIndex);
-    // console.log('visitedIndexes', visitedIndexes);
-    if (visitedIndexes[instructionIndex]) {
-      return { s: false, val: val };
+    const didLoop = visitedIndexes[instructionIndex];
+    if (didLoop) {
+      return { finished: false, val: val };
     }
 
     visitedIndexes[instructionIndex] = true;
     const instruction = instructions[instructionIndex];
-    // console.log('instruction', instruction);
-    if (instruction.op === 'acc') {
-      val += instruction.arg;
-      instructionIndex += 1;
-    } else if (instruction.op === 'jmp') {
-      instructionIndex += instruction.arg;
-    } else {
-      instructionIndex += 1;
+    instructionIndex += 1;
+    switch (instruction.op) {
+      case 'acc':
+        val += instruction.arg;
+        break;
+      case 'jmp':
+        instructionIndex += instruction.arg - 1;
+        break;
+      default:
+        break;
     }
 
-    if (instructionIndex === instructions.length) {
-      return { s: true, val: val };
+    const didFinish = instructionIndex === instructions.length;
+    if (didFinish) {
+      return { finished: true, val: val };
     }
   }
 };
@@ -48,14 +50,21 @@ const simpleRun = runInstructions(rawInstructions);
 console.log('Answer to part 1 is', simpleRun.val);
 
 _.forEach(rawInstructions, (rawInstruction, index) => {
-  if (rawInstruction.op === 'jmp') {
-    const newInstr = _.cloneDeep(rawInstructions);
-    newInstr[index].op = 'nop';
-    const { s, val } = runInstructions(newInstr);
-    if (s) {
-      console.log('Answer to part 2 is', val);
-      return false;
-    }
+  if (rawInstruction.op !== 'jmp') {
+    return;
+  }
+
+  // try setting jmp to nop
+  const newInstr = _.cloneDeep(rawInstructions);
+  newInstr[index].op = 'nop';
+
+  // now run the instructions
+  const { finished, val } = runInstructions(newInstr);
+
+  // if we finished successfully, we're done!
+  if (finished) {
+    console.log('Answer to part 2 is', val);
+    return false;
   }
 });
 
