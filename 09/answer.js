@@ -24,9 +24,10 @@ _.forEach(numbers, (number, index) => {
   }
 
   part1Answer = number;
-  console.log('Answer 1', part1Answer);
   return false;
 });
+
+console.log('Answer 1', part1Answer);
 
 const sumBetween = (s, e) => {
   return _.sum(numbers.slice(s, e + 1));
@@ -41,8 +42,7 @@ const tryToFindSumFromIndex = (startIndex) => {
     const sum = sumBetween(startIndex, endIndex);
     if (sum === part1Answer) {
       const rangeThatSums = numbers.slice(startIndex, endIndex + 1);
-      console.log('Answer 2 is', _.max(rangeThatSums) + _.min(rangeThatSums));
-      return;
+      return _.max(rangeThatSums) + _.min(rangeThatSums);
     }
     if (sum > part1Answer) {
       return;
@@ -52,5 +52,9 @@ const tryToFindSumFromIndex = (startIndex) => {
 };
 
 _.forEach(numbers, (n, i) => {
-  tryToFindSumFromIndex(i);
+  const answer = tryToFindSumFromIndex(i);
+  if (answer) {
+    console.log('Answer Part 2', answer);
+    return false;
+  }
 });
