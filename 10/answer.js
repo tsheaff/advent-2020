@@ -34,6 +34,10 @@ const splitBy3 = diffs.join(',').split('3,').map((arr1s) => {
 
 let product = 1;
 _.forEach(splitBy3, (num1s) => {
+  if (num1s > 5) {
+    console.log('oh no');
+    return;
+  }
   product *= [1, 1, 2, 4, 7, -1, -1, -1][num1s];
 });
 console.log('answer to Part 2 is', product);
