@@ -12,42 +12,28 @@ const iterate = (seatLayout) => {
   _.forEach(seatLayout, (row, atY) => {
     const newRow = [];
     _.forEach(row, (char, atX) => {
-      if (char === '.') {
-        return;
-      }
+      if (char === '.') { return; }
 
-      const adjacents = [];
-
+      let numOccupied = 0;
       _.forEach(directions, (direction) => {
         let x = atX; let y = atY;
         while (true) {
-          x += direction[0];
-          y += direction[1];
-          if (x < 0 || x >= row.length) {
-            break;
-          }
-          if (y < 0 || y >= seatLayout.length) {
-            break;
-          }
+          x += direction[0]; y += direction[1];
+          if (x < 0 || x >= row.length) { break; }
+          if (y < 0 || y >= seatLayout.length) { break; }
           const charViewed = seatLayout[y][x];
+          if (charViewed === '#') {
+            numOccupied += 1;
+          }
           if (charViewed !== '.') {
-            adjacents.push(charViewed);
             break;
           }
         }
       });
+
       const newChar = (() => {
-        const numOccupiedAdjacent = _.size(_.filter(adjacents, (a) => { return a === '#'; }));
-        if (char === 'L') {
-          if (numOccupiedAdjacent === 0) {
-            return '#';
-          }
-        }
-        if (char === '#') {
-          if (numOccupiedAdjacent >= 5) {
-            return 'L';
-          }
-        }
+        if (char === 'L' && numOccupied === 0) { return '#'; }
+        if (char === '#' && numOccupied >= 5) { return 'L'; }
         return char;
       })();
       newRow.push(newChar);
