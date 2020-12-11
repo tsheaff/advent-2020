@@ -65,15 +65,12 @@ const countOccupied = (l) => {
   return numO;
 };
 
-let i = 0;
 let nextLayout;
 while (true) {
   nextLayout = iterate(layout);
   if (_.isEqual(nextLayout, layout)) {
-    console.log('same again', i);
-    console.log('num occupied', countOccupied(nextLayout));
+    console.log('Answer to Part 2:', countOccupied(nextLayout));
     break;
   }
   layout = nextLayout;
-  i += 1;
 }
