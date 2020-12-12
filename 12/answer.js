@@ -25,14 +25,14 @@ const move = (instr) => {
 };
 
 const turnBy = (nowX, nowY, numDeg) => {
-  if (numDeg === 0) { return [nowX, nowY]; }
+  if (numDeg === 0) { return { x: nowX, y: nowY }; }
   const newX = -nowY;
   const newY = nowX;
   return turnBy(newX, newY, numDeg - 90);
 };
 
 const moveBy = (dir, num) => {
-  console.log('moveBy', dir, num);
+  // console.log('moveBy', dir, num);
   if (dir === 'N') {
     waypointY -= num;
   } else if (dir === 'S') {
@@ -45,11 +45,17 @@ const moveBy = (dir, num) => {
     x += num * waypointX;
     y += num * waypointY;
   } else if (dir === 'L' || dir === 'R') {
-    const numDeg = (dir === 'L') ? -num : num;
-    const res = turnBy(waypointX, waypointY, numDeg + 360);
-    waypointX = res[0];
-    waypointY = res[1];
+    const numDeg = (dir === 'L') ? (360 - num) : num;
+    const newXAndY = turnBy(waypointX, waypointY, numDeg + 360);
+    waypointX = newXAndY.x;
+    waypointY = newXAndY.y;
   }
+  // console.log('AFTER: ', x, y, facing);
 };
+
+const lines = fileLines('./input.txt');
+_.forEach(lines, (line) => {
+  move(line);
+});
 
 console.log('Answer:', Math.abs(x) + Math.abs(y));
