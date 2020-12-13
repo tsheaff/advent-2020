@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "lodash": "^4.17.20",
+    "mathjs": "^8.1.0",
     "prettier": "^2.2.1"
   },
   "devDependencies": {
