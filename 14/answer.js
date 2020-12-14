@@ -17,33 +17,29 @@ _.forEach(lines, (line) => {
     mask = line.split('mask = ')[1];
     return;
   }
+
   const addr = parseInt(line.split('[')[1].split(']')[0], 10);
   const decimal = parseInt(line.split(' = ')[1], 10);
   // const binary = dec2bin(decimal);
 
-  let paddedAddrBinary = dec2bin(addr).padStart(36, '0');
+  let floatingIndexes = [];
+  let maskedAddrBinary = dec2bin(addr).padStart(36, '0');
   _.forEach(mask, (maskChar, index) => {
     if (maskChar !== '0') {
-      paddedAddrBinary = paddedAddrBinary.replaceAt(index, maskChar);
+      maskedAddrBinary = maskedAddrBinary.replaceAt(index, maskChar);
     }
-  });
-
-  let floatingIndexes = [];
-  _.forEach(paddedAddrBinary, (char, index) => {
-    if (char === 'X') {
+    if (maskChar === 'X') {
       floatingIndexes.push(index);
     }
   });
 
-  let allAddresses = [];
-  let allValues = _.range(0, 2 ** floatingIndexes.length);
-  _.forEach(allValues, (decimalValue) => {
+  const allAddresses = _.map(_.range(0, 2 ** floatingIndexes.length), (decimalValue) => {
     let binaryFloats = `${dec2bin(decimalValue)}`.padStart(floatingIndexes.length, '0');
-    let address = _.cloneDeep(paddedAddrBinary);
+    let address = _.cloneDeep(maskedAddrBinary);
     _.forEach(binaryFloats, (binaryChar, binaryIndex) => {
       address = address.replaceAt(floatingIndexes[binaryIndex], binaryChar);
     });
-    allAddresses.push(parseInt(address, 2));
+    return parseInt(address, 2);
   });
 
   _.forEach(allAddresses, (address) => {
