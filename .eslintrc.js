@@ -51,6 +51,8 @@ module.exports = {
     ],
     'import/no-dynamic-require': 'off',
     'prefer-const': 'off',
+    'no-extend-native': 'off',
+    'no-bitwise': 'off',
   },
 };
 
